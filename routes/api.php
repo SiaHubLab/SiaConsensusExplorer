@@ -14,4 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/block/{height}', 'ExplorerController@getBlock');
+Route::post('/blocks', 'ExplorerController@getBlocks');
 Route::get('/hash/{hash}', 'ExplorerController@getHash');
+Route::get('/latest', 'ExplorerController@getLatest');
+Route::get('/search/{search}', 'ExplorerController@getSearchResults');

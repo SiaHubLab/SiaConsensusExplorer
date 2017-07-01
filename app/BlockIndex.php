@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class BlockIndex extends Model
 {
     protected $table = 'block_hash_index';
-    
+
     public function hash()
     {
-        return $this->belongsTo(App\Hash::class);
+        return $this->belongsTo(Hash::class);
     }
 }

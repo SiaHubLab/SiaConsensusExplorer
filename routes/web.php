@@ -12,3 +12,5 @@
 */
 
 Route::get('/', 'MainController@index');
+Route::get('/hash/{hash}', 'MainController@index');
+Route::get('/block/{height}', 'MainController@index');
