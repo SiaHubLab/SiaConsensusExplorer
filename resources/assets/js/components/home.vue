@@ -72,27 +72,31 @@
         },
         watch: {
             search(){
-                if(this.search == "") {
-                    this.searchResults = [];
-                    this.searchErrors = [];
-                    return false;
-                }
+                var that = this;
 
-                if(this.loading) return false;
+                _.debounce(function(){
+                    if(that.search == "") {
+                        that.searchResults = [];
+                        that.searchErrors = [];
+                        return false;
+                    }
 
-                this.searchErrors = [];
-                this.error = false;
-                this.loading = true;
-                axios.get('/api/search/'+this.search)
-                    .then((response) => {
-                        this.searchResults = response.data;
-                        this.loading = false;
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.searchErrors = error.response.data;
-                        this.loading = false;
-                    });
+                    if(that.loading) return false;
+
+                    that.searchErrors = [];
+                    that.error = false;
+                    that.loading = true;
+                    axios.get('/api/search/'+that.search)
+                        .then((response) => {
+                            that.searchResults = response.data;
+                            that.loading = false;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            that.searchErrors = error.response.data;
+                            that.loading = false;
+                        });
+                }, 500)();
             }
         },
         methods: {
