@@ -53,6 +53,9 @@ class ExplorerController extends BaseController
         ]);
 
         $blocks = [];
+        $response = [];
+
+
         foreach (array_unique($request->input('blocks')) as $height) {
             $cache_key = "block_".$height;
             if (!Cache::has($cache_key)) {
@@ -61,16 +64,55 @@ class ExplorerController extends BaseController
                     $res = $client->request('GET', env('SIA_ADDRESS').'/consensus/blocks/'.$height);
                     $block = json_decode($res->getBody(), true);
                     Cache::put($cache_key, $block, 60);
-                    $blocks[] = $block;
+                        //$blocks[] = $block;
                 } catch (\Exception $e) {
-                    return response()->json(['error' => 'Ooops, our wallet unavailable. Please try later.'], 503);
+                    //return response()->json(['error' => 'Ooops, our wallet unavailable. Please try later.'], 503);
+                    continue;
                 }
             } else {
-                $blocks[] = Cache::get($cache_key);
+                $block = Cache::get($cache_key);
+                    //$blocks[] = Cache::get($cache_key);
+            }
+
+            // if (strpos(var_export($block, true), $request->input('hash')) !== false) {
+            //     dd($block);
+            // }
+
+            switch ($request->input('type')) {
+                case 'unlockhash':
+                foreach ($block['minerpayouts'] as $scoid => $sco) {
+                    if ($sco['unlockhash'] == $request->input('hash')) {
+                        $sco['id'] = $scoid;
+                        $response[$height]['minerpayouts'][] = $sco;
+                    }
+                }
+
+                foreach ($block['transactions'] as $trid => $tr) {
+                    foreach ($tr['siacoinoutputs'] as $scoid => $sco) {
+                        if ($sco['unlockhash'] == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                        }
+                    }
+
+                    foreach ($tr['siafundoutputs'] as $scoid => $sco) {
+                        if ($sco['unlockhash'] == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;
+                        }
+                    }
+                }
+                break;
+
+                default:
+                    $response[] = $block;
+                break;
             }
         }
 
-        return response()->json($blocks);
+        return response()->json($response);
     }
 
     /**
