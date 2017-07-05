@@ -64,32 +64,41 @@ class ExplorerController extends BaseController
                     $res = $client->request('GET', env('SIA_ADDRESS').'/consensus/blocks/'.$height);
                     $block = json_decode($res->getBody(), true);
                     Cache::put($cache_key, $block, 60);
-                        //$blocks[] = $block;
                 } catch (\Exception $e) {
                     //return response()->json(['error' => 'Ooops, our wallet unavailable. Please try later.'], 503);
                     continue;
                 }
             } else {
                 $block = Cache::get($cache_key);
-                    //$blocks[] = Cache::get($cache_key);
             }
 
-            // if (strpos(var_export($block, true), $request->input('hash')) !== false) {
-            //     dd($block);
-            // }
-
+            $response[$height]['height'] = $height;
+            $response[$height]['raw'] = $block;
             switch ($request->input('type')) {
                 case 'unlockhash':
+                case 'siacoinoutputid':
+                case 'siafundoutputid':
                 foreach ($block['minerpayouts'] as $scoid => $sco) {
-                    if ($sco['unlockhash'] == $request->input('hash')) {
+                    $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
+                    if ($hash_check == $request->input('hash')) {
                         $sco['id'] = $scoid;
                         $response[$height]['minerpayouts'][] = $sco;
                     }
                 }
 
                 foreach ($block['transactions'] as $trid => $tr) {
+                    foreach ($tr['siacoininputs'] as $scoid => $sco) {
+                        $hash_check = $scoid;
+                        if ($hash_check == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siacoininputs'][$scoid] = $sco;
+                        }
+                    }
+
                     foreach ($tr['siacoinoutputs'] as $scoid => $sco) {
-                        if ($sco['unlockhash'] == $request->input('hash')) {
+                        $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
+                        if ($hash_check == $request->input('hash')) {
                             $sco['id'] = $scoid;
                             $sco['transaction'] = $trid;
                             $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
@@ -97,7 +106,32 @@ class ExplorerController extends BaseController
                     }
 
                     foreach ($tr['siafundoutputs'] as $scoid => $sco) {
-                        if ($sco['unlockhash'] == $request->input('hash')) {
+                        $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
+                        if ($hash_check == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;
+                        }
+                    }
+                }
+                break;
+
+                case 'transactionid':
+                foreach ($block['transactions'] as $trid => $tr) {
+                    if ($trid == $request->input('hash')) {
+                        foreach ($tr['siacoininputs'] as $scoid => $sco) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siacoininputs'][$scoid] = $sco;
+                        }
+
+                        foreach ($tr['siacoinoutputs'] as $scoid => $sco) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                        }
+
+                        foreach ($tr['siafundoutputs'] as $scoid => $sco) {
                             $sco['id'] = $scoid;
                             $sco['transaction'] = $trid;
                             $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;

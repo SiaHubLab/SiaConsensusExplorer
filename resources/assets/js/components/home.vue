@@ -8,6 +8,17 @@
                 </div>
             </div>
         </div>
+
+        <div class="row" v-if="loading">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" style="width: 100%">
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="row" v-if="searchResults.length">
             <div class="col-md-8 col-md-offset-2">
                 <h3>Search result:</h3>
