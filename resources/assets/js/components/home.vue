@@ -5,6 +5,16 @@
     max-width: 100px;
     display: list-item;
 }
+
+
+.table
+{
+    background-color: #fff;
+}
+
+.table tr td {
+    padding-left: 8px;
+}
 </style>
 <template>
 <div>
