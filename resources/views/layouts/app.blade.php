@@ -40,8 +40,10 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li><router-link to="/">Explorer</router-link></li>
+                        <li><a href="/">Explorer</a></li>
                         <li><a href="/api/documentation">API</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
                         <li><a target="_blank" href="https://siahub.info/">Network Monitor</a></li>
                         <li><a target="_blank" href="https://consensus.siahub.info/">Consensus DB</a></li>
                     </ul>
