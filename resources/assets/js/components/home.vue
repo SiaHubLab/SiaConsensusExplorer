@@ -6,7 +6,6 @@
     display: list-item;
 }
 
-
 .table
 {
     background-color: #fff;
