@@ -41,6 +41,7 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                         <li><router-link to="/">Explorer</router-link></li>
+                        <li><a href="/api/documentation">API</a></li>
                         <li><a target="_blank" href="https://siahub.info/">Network Monitor</a></li>
                         <li><a target="_blank" href="https://consensus.siahub.info/">Consensus DB</a></li>
                     </ul>
