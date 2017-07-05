@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="https://siahub.info/img/favicon.png" />
+    <link rel="icon" type="image/png" href="/img/explorer_favicon.png" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -33,7 +33,7 @@
 
                     <!-- Branding Image -->
                     <router-link class="navbar-brand" to="/">
-                        <img src="https://siahub.info/img/logo.png" alt="{{ config('app.name', 'Laravel') }}">
+                        <img src="/img/siahub_explorer.png" alt="{{ config('app.name', 'Laravel') }}">
                     </router-link>
                 </div>
 
