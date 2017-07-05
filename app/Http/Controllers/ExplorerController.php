@@ -73,7 +73,7 @@ class ExplorerController extends BaseController
             }
 
             $response[$height]['height'] = $height;
-            $response[$height]['raw'] = $block;
+            //$response[$height]['raw'] = $block;
             switch ($request->input('type')) {
                 case 'unlockhash':
                 case 'siacoinoutputid':
