@@ -73,6 +73,7 @@ class ExplorerController extends BaseController
             }
 
             $response[$height]['height'] = $height;
+            $response[$height]['headers'] = $block['blockheader'];
             //$response[$height]['raw'] = $block;
             switch ($request->input('type')) {
                 case 'unlockhash':

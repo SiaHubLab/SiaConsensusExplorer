@@ -45,7 +45,7 @@
     <div class="row blocksList" v-for="block in orderedBlocks">
         <div class="col-md-8 col-md-offset-2">
             <button class="btn btn-primary btn-xs btn-collapse" type="button" data-toggle="collapse" :data-target="'#block'+block.height">
-                    Block height #{{block.height}}
+                    Block height #{{block.height}} // <span :title="moment.unix(block.headers.timestamp).format('MMMM DD YYYY, HH:mm:ss')">{{moment.unix(block.headers.timestamp).fromNow()}}</span>
                 </button>
             <div class="collapse in" :id="'block'+block.height">
                 <div class="row" v-if="block.minerpayouts">
@@ -143,6 +143,7 @@
 import hashType from '../filters/hashType'
 import currency from '../filters/currency'
 import _ from 'lodash'
+import moment from 'moment'
 
 export default {
     mounted() {
@@ -298,7 +299,8 @@ export default {
             currentChunk: 0,
             loading: false,
             chunkLoad: false,
-            error: false
+            error: false,
+            moment: moment,
         }
     }
 }
