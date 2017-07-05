@@ -33,7 +33,7 @@
 
                     <!-- Branding Image -->
                     <router-link class="navbar-brand" to="/">
-                        <img src="/img/siahub_explorer.png?2" alt="{{ config('app.name', 'Laravel') }}">
+                        <img src="/img/siahub_explorer.png?3" alt="{{ config('app.name', 'Laravel') }}">
                     </router-link>
                 </div>
 
