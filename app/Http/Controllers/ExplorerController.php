@@ -2,14 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\BlockIndex;
 use App\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Hash;
 
+/**
+ * @SWG\Info(title="SiaHub Explorer API", version="0.1")
+ */
 class ExplorerController extends BaseController
 {
+    /**
+     * @SWG\Get(
+     *     path="/api/block/{height}",
+     *     summary="Load single consensus block from siad by height",
+     *     @SWG\Parameter(
+     *         name="height",
+     *         in="path",
+     *         description="Block height",
+     *         required=true,
+     *         type="integer"
+     *     ),
+     *     produces={"application/json"},
+     *     @SWG\Response(response="200", description="Return raw consensus block"),
+     *     @SWG\Response(response="422", description="Height must be numeric value"),
+     *     @SWG\Response(response="503", description="Wallet unavailable, try later")
+     * )
+     */
     /**
      * Get raw consensus block
      *
@@ -40,6 +59,28 @@ class ExplorerController extends BaseController
         return response()->json(Cache::get($cache_key));
     }
 
+    /**
+     * @SWG\Post(
+     *     path="/api/blocks",
+     *     summary="Load multiple consensus blocks",
+     *     @SWG\Parameter(
+     *         name="blocks[]",
+     *         in="formData",
+     *         description="Blocks height array",
+     *         required=true,
+     *         type="array",
+     *         collectionFormat="multi",
+     *         @SWG\Items(
+     *             type="integer"
+     *         )
+     *     ),
+     *     consumes={"application/x-www-form-urlencoded"},
+     *     produces={"application/json"},
+     *     @SWG\Response(response="200", description="Return raw consensus blocks array"),
+     *     @SWG\Response(response="422", description="Block fields required"),
+     *     @SWG\Response(response="503", description="Wallet unavailable, try later")
+     * )
+     */
     /**
      * Get multiple raw consensus blocks
      *
@@ -187,6 +228,22 @@ class ExplorerController extends BaseController
     }
 
     /**
+     * @SWG\Get(
+     *     path="/api/hash/{hash}",
+     *     summary="Get hash info",
+     *     @SWG\Parameter(
+     *         name="hash",
+     *         in="path",
+     *         description="Hash transaction id, output/input id etc...",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     produces={"application/json"},
+     *     @SWG\Response(response="200", description="Return hash info with blocks"),
+     *     @SWG\Response(response="422", description="Hash required, must be alpha-numeric 64-100 length")
+     * )
+     */
+    /**
      * Get hash info from index
      *
      * Get hash type and block references for any type hash
@@ -261,6 +318,22 @@ class ExplorerController extends BaseController
         return response()->json($latest);
     }
 
+    /**
+     * @SWG\Get(
+     *     path="/api/search/{hash}",
+     *     summary="Search hash",
+     *     @SWG\Parameter(
+     *         name="hash",
+     *         in="path",
+     *         description="Hash transaction id, output/input id etc...",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     produces={"application/json"},
+     *     @SWG\Response(response="200", description="Return hash info with blocks"),
+     *     @SWG\Response(response="422", description="Hash required, must be alpha-numeric 64-100 length")
+     * )
+     */
     /**
      * Return last N known hashes
      *

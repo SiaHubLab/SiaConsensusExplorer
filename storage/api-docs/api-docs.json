@@ -1,0 +1,123 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "SiaHub Explorer API",
+        "version": "0.1"
+    },
+    "paths": {
+        "/api/block/{height}": {
+            "get": {
+                "summary": "Load single consensus block from siad by height",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "height",
+                        "in": "path",
+                        "description": "Block height",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return raw consensus block"
+                    },
+                    "422": {
+                        "description": "Height must be numeric value"
+                    },
+                    "503": {
+                        "description": "Wallet unavailable, try later"
+                    }
+                }
+            }
+        },
+        "/api/blocks": {
+            "post": {
+                "summary": "Load multiple consensus blocks",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "blocks[]",
+                        "in": "formData",
+                        "description": "Blocks height array",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "multi"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return raw consensus blocks array"
+                    },
+                    "422": {
+                        "description": "Block fields required"
+                    },
+                    "503": {
+                        "description": "Wallet unavailable, try later"
+                    }
+                }
+            }
+        },
+        "/api/hash/{hash}": {
+            "get": {
+                "summary": "Get hash info",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "Hash transaction id, output/input id etc...",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return hash info with blocks"
+                    },
+                    "422": {
+                        "description": "Hash required, must be alpha-numeric 64-100 length"
+                    }
+                }
+            }
+        },
+        "/api/search/{hash}": {
+            "get": {
+                "summary": "Search hash",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "Hash transaction id, output/input id etc...",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return hash info with blocks"
+                    },
+                    "422": {
+                        "description": "Hash required, must be alpha-numeric 64-100 length"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {}
+}
