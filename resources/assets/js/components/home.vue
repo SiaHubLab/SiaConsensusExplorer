@@ -259,7 +259,7 @@ export default {
             latest: [],
             searchResults: [],
             searchErrors: [],
-            search: "",
+            search: '',
             loading: false,
             error: false
         }

@@ -323,7 +323,8 @@ export default {
     },
     filters: {
         hashType,
-        currency
+        currency,
+        sfCurrency
     },
     data() {
         return {
