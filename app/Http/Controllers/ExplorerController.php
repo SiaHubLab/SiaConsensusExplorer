@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BlockIndex;
 use App\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -79,6 +80,8 @@ class ExplorerController extends BaseController
                 case 'unlockhash':
                 case 'siacoinoutputid':
                 case 'siafundoutputid':
+                case 'filecontractid':
+                case 'filecontractrevisions':
                 foreach ($block['minerpayouts'] as $scoid => $sco) {
                     $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
                     if ($hash_check == $request->input('hash')) {
@@ -88,6 +91,24 @@ class ExplorerController extends BaseController
                 }
 
                 foreach ($block['transactions'] as $trid => $tr) {
+                    foreach ($tr['filecontracts'] as $scoid => $sco) {
+                        $hash_check = $scoid;
+                        if ($hash_check == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                        }
+                    }
+
+                    foreach ($tr['filecontractrevisions'] as $scoid => $sco) {
+                        $hash_check = $scoid;
+                        if ($hash_check == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                        }
+                    }
+
                     foreach ($tr['siacoininputs'] as $scoid => $sco) {
                         $hash_check = $scoid;
                         if ($hash_check == $request->input('hash')) {
@@ -103,6 +124,15 @@ class ExplorerController extends BaseController
                             $sco['id'] = $scoid;
                             $sco['transaction'] = $trid;
                             $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                        }
+                    }
+
+                    foreach ($tr['siafundinputs'] as $scoid => $sco) {
+                        $hash_check = $scoid;
+                        if ($hash_check == $request->input('hash')) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siafundinputs'][$scoid] = $sco;
                         }
                     }
 
@@ -130,6 +160,12 @@ class ExplorerController extends BaseController
                             $sco['id'] = $scoid;
                             $sco['transaction'] = $trid;
                             $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                        }
+
+                        foreach ($tr['siafundinputs'] as $scoid => $sco) {
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
+                            $response[$height]['transactions'][$trid]['siafundinputs'][$scoid] = $sco;
                         }
 
                         foreach ($tr['siafundoutputs'] as $scoid => $sco) {
@@ -186,13 +222,42 @@ class ExplorerController extends BaseController
      */
     public function getLatest()
     {
-        $latest = Hash::with('blocks')
+        $tr = Hash::with('blocks')
                       ->join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
-                      ->orderBy('block_hash_index.height', 'desc')
-                      ->take(50)
+                      ->where('type', 'transactionid')
+                      ->orderBy('hashes.id', 'desc')
+                      ->take(20)
                       ->get();
 
+        $uh = Hash::with('blocks')
+                      ->join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
+                      ->where('type', 'unlockhash')
+                      ->orderBy('hashes.id', 'desc')
+                      ->take(20)
+                      ->get();
 
+        $sc = Hash::with('blocks')
+                      ->join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
+                      ->where('type', 'siacoinoutputid')
+                      ->orderBy('hashes.id', 'desc')
+                      ->take(20)
+                      ->get();
+
+        $fc = Hash::with('blocks')
+                      ->join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
+                      ->where('type', 'filecontractid')
+                      ->orderBy('hashes.id', 'desc')
+                      ->take(20)
+                      ->get();
+
+        $sf = Hash::with('blocks')
+                      ->join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
+                      ->where('type', 'siafundoutputid')
+                      ->orderBy('hashes.id', 'desc')
+                      ->take(20)
+                      ->get();
+
+        $latest = array_merge($tr->toArray(), $uh->toArray(), $sc->toArray(), $fc->toArray(), $sf->toArray());
         return response()->json($latest);
     }
 

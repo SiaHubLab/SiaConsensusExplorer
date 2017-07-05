@@ -21,14 +21,14 @@
             <h3>Hash: <router-link :to="'/hash/'+hash.hash">{{hash.hash}}</router-link></h3>
             <h5>Hash type: {{hash.type | hashType}}</h5>
             <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
-            <h5>Total SF Outputs: {{sfoutputs | currency}} SF</h5>
+            <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
             <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
         </div>
     </div>
     <div class="flying alert alert-success">
         <h5>Hash type: {{hash.type | hashType}}</h5>
         <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
-        <h5>Total SF Outputs: {{sfoutputs | currency}} SF</h5>
+        <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
         <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
     </div>
 
@@ -96,6 +96,21 @@
                         </div>
                     </div>
 
+                    <div class="row" v-if="tr.siafundinputs">
+                        <div class="col-md-12">
+                            <div class="alert alert-info" v-for="scoutput in tr.siafundinputs">
+                                <p><span class="label label-success">Siafund Input</span></p>
+                                <p>Transaction ID:
+                                    <router-link :to="'/hash/'+scoutput.transaction">{{scoutput.transaction}}</router-link>
+                                </p>
+                                <p>Output ID:
+                                    <router-link :to="'/hash/'+scoutput.id">{{scoutput.id}}</router-link>
+                                </p>
+                                <p>Receiver: {{scoutput.unlockconditions.publickeys[0].algorithm}}:{{scoutput.unlockconditions.publickeys[0].key}}</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row" v-if="tr.siafundoutputs">
                         <div class="col-md-12">
                             <div class="alert alert-info" v-for="sfoutput in tr.siafundoutputs">
@@ -106,7 +121,25 @@
                                 <p>Output ID:
                                     <router-link :to="'/hash/'+sfoutput.id">{{sfoutput.id}}</router-link>
                                 </p>
-                                <p>Amount: {{sfoutput.value | currency}} SF</p>
+                                <p>Amount: {{sfoutput.value | sfCurrency}} SF</p>
+                                <p>Receiver:
+                                    <router-link :to="'/hash/'+sfoutput.unlockhash">{{sfoutput.unlockhash}}</router-link>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" v-if="tr.filecontracts">
+                        <div class="col-md-12">
+                            <div class="alert alert-info" v-for="sfoutput in tr.filecontracts">
+                                <p><span class="label label-success">File Contract</span></p>
+                                <p>Transaction ID:
+                                    <router-link :to="'/hash/'+sfoutput.transaction">{{sfoutput.transaction}}</router-link>
+                                </p>
+                                <p>Contract ID:
+                                    <router-link :to="'/hash/'+sfoutput.id">{{sfoutput.id}}</router-link>
+                                </p>
+                                <p>Payout: {{sfoutput.payout | currency}} SC</p>
                                 <p>Receiver:
                                     <router-link :to="'/hash/'+sfoutput.unlockhash">{{sfoutput.unlockhash}}</router-link>
                                 </p>
@@ -142,6 +175,7 @@
 <script>
 import hashType from '../filters/hashType'
 import currency from '../filters/currency'
+import sfCurrency from '../filters/sfCurrency'
 import _ from 'lodash'
 import moment from 'moment'
 
