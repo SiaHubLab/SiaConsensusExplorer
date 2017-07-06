@@ -41,7 +41,7 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                         <li><a href="/">Explorer</a></li>
-                        <li><a href="/api/documentation">API</a></li>
+                        <li><a target="_blank" href="https://siahub.readme.io/v1.0/reference#block">API</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a target="_blank" href="https://siahub.info/">Network Monitor</a></li>
