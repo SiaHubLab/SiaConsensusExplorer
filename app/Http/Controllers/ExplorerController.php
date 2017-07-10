@@ -103,13 +103,15 @@ class ExplorerController extends BaseController
                         }
 
                         foreach ($sco['validproofoutputs'] as $hash => $proof) {
-                            if ($proof['unlockhash'] == $request->input('hash')) {
+                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                            if ($hash_check == $request->input('hash')) {
                                 $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
                             }
                         }
 
                         foreach ($sco['missedproofoutputs'] as $hash => $proof) {
-                            if ($proof['unlockhash'] == $request->input('hash')) {
+                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                            if ($hash_check == $request->input('hash')) {
                                 $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
                             }
                         }
@@ -124,13 +126,15 @@ class ExplorerController extends BaseController
                         }
 
                         foreach ($sco['newvalidproofoutputs'] as $hash => $proof) {
-                            if ($proof['unlockhash'] == $request->input('hash')) {
+                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                            if ($hash_check == $request->input('hash')) {
                                 $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
                             }
                         }
 
                         foreach ($sco['newmissedproofoutputs'] as $hash => $proof) {
-                            if ($proof['unlockhash'] == $request->input('hash')) {
+                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                            if ($hash_check == $request->input('hash')) {
                                 $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
                             }
                         }
