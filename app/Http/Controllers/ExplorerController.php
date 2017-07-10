@@ -74,7 +74,11 @@ class ExplorerController extends BaseController
 
             $response[$height]['height'] = $height;
             $response[$height]['headers'] = $block['blockheader'];
-            //$response[$height]['raw'] = $block;
+
+            if (env('APP_ENV') == "local") {
+                $response[$height]['raw'] = $block;
+            }
+
             switch ($request->input('type')) {
                 case 'unlockhash':
                 case 'siacoinoutputid':
@@ -92,19 +96,43 @@ class ExplorerController extends BaseController
                 foreach ($block['transactions'] as $trid => $tr) {
                     foreach ($tr['filecontracts'] as $scoid => $sco) {
                         $hash_check = $scoid;
+                        $sco['id'] = $scoid;
+                        $sco['transaction'] = $trid;
                         if ($hash_check == $request->input('hash')) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
                             $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                        }
+
+                        foreach ($sco['validproofoutputs'] as $hash => $proof) {
+                            if ($proof['unlockhash'] == $request->input('hash')) {
+                                $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                            }
+                        }
+
+                        foreach ($sco['missedproofoutputs'] as $hash => $proof) {
+                            if ($proof['unlockhash'] == $request->input('hash')) {
+                                $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                            }
                         }
                     }
 
                     foreach ($tr['filecontractrevisions'] as $scoid => $sco) {
                         $hash_check = $scoid;
+                        $sco['id'] = $scoid;
+                        $sco['transaction'] = $trid;
                         if ($hash_check == $request->input('hash')) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
                             $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                        }
+
+                        foreach ($sco['newvalidproofoutputs'] as $hash => $proof) {
+                            if ($proof['unlockhash'] == $request->input('hash')) {
+                                $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                            }
+                        }
+
+                        foreach ($sco['newmissedproofoutputs'] as $hash => $proof) {
+                            if ($proof['unlockhash'] == $request->input('hash')) {
+                                $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                            }
                         }
                     }
 
@@ -202,7 +230,7 @@ class ExplorerController extends BaseController
 
         $cache_key = "hash_".$hash;
         if (!Cache::has($cache_key)) {
-            $hash = Hash::with('blocks')
+            $hash = Hash::with(['blocks', 'proofs', 'contracts'])
                              ->where('hash', $hash)
                              ->first();
 

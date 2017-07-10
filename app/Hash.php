@@ -12,4 +12,14 @@ class Hash extends Model
     {
         return $this->hasMany(BlockIndex::class);
     }
+
+    public function proofs()
+    {
+        return $this->hasMany(ProofIndex::class, 'proof_hash_id', 'id');
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(ProofIndex::class, 'fc_hash_id', 'id');
+    }
 }

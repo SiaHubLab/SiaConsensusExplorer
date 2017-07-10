@@ -46,7 +46,7 @@
         <div class="col-md-8 col-md-offset-2">
             <button class="btn btn-primary btn-xs btn-collapse" type="button" data-toggle="collapse" :data-target="'#block'+block.height">
                     Block height #{{block.height}} // <span :title="moment.unix(block.headers.timestamp).format('MMMM DD YYYY, HH:mm:ss')">{{moment.unix(block.headers.timestamp).fromNow()}}</span>
-                </button>
+            </button>
             <div class="collapse in" :id="'block'+block.height">
                 <div class="row" v-if="block.minerpayouts">
                     <div class="col-md-12" v-for="scoutput in block.minerpayouts">
@@ -131,18 +131,114 @@
 
                     <div class="row" v-if="tr.filecontracts">
                         <div class="col-md-12">
-                            <div class="alert alert-info" v-for="sfoutput in tr.filecontracts">
+                            <div class="alert alert-info" v-for="filecontract in tr.filecontracts">
                                 <p><span class="label label-success">File Contract</span></p>
                                 <p>Transaction ID:
-                                    <router-link :to="'/hash/'+sfoutput.transaction">{{sfoutput.transaction}}</router-link>
+                                    <router-link :to="'/hash/'+filecontract.transaction">{{filecontract.transaction}}</router-link>
                                 </p>
                                 <p>Contract ID:
-                                    <router-link :to="'/hash/'+sfoutput.id">{{sfoutput.id}}</router-link>
+                                    <router-link :to="'/hash/'+filecontract.id">{{filecontract.id}}</router-link>
                                 </p>
-                                <p>Payout: {{sfoutput.payout | currency}} SC</p>
+                                <p>Payout: {{filecontract.payout | currency}} SC</p>
                                 <p>Receiver:
-                                    <router-link :to="'/hash/'+sfoutput.unlockhash">{{sfoutput.unlockhash}}</router-link>
+                                    <router-link :to="'/hash/'+filecontract.unlockhash">{{filecontract.unlockhash}}</router-link>
                                 </p>
+
+                                <div class="row" v-if="filecontract.missedproofoutputs">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-warning btn-xs btn-collapse" type="button" data-toggle="collapse" :data-target="'#missed'+filecontract.id">
+                                                Missed Proofs
+                                        </button>
+                                        <div class="collapse" :id="'missed'+filecontract.id">
+                                            <div class="alert alert-warning" v-for="(missedproof, id) in filecontract.missedproofoutputs">
+                                                <p><span class="label label-warning">Missed Proof Output</span></p>
+                                                <p>Output ID:
+                                                    <router-link :to="'/hash/'+id">{{id}}</router-link>
+                                                </p>
+                                                <p>Amount: {{missedproof.value | currency}} SC</p>
+                                                <p>Receiver:
+                                                    <router-link :to="'/hash/'+missedproof.unlockhash">{{missedproof.unlockhash}}</router-link>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" v-if="filecontract.validproofoutputs">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-success btn-xs btn-collapse" type="button" data-toggle="collapse" :data-target="'#valid'+filecontract.id">
+                                                Valid Proofs
+                                        </button>
+                                        <div class="collapse" :id="'valid'+filecontract.id">
+                                            <div class="alert alert-success" v-for="(validproof, id) in filecontract.validproofoutputs">
+                                                <p><span class="label label-success">Valid Proof Output</span></p>
+                                                <p>Output ID:
+                                                    <router-link :to="'/hash/'+id">{{id}}</router-link>
+                                                </p>
+                                                <p>Amount: {{validproof.value | currency}} SC</p>
+                                                <p>Receiver:
+                                                    <router-link :to="'/hash/'+validproof.unlockhash">{{validproof.unlockhash}}</router-link>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" v-if="tr.filecontractrevisions">
+                        <div class="col-md-12">
+                            <div class="alert alert-info" v-for="filecontract in tr.filecontractrevisions">
+                                <p><span class="label label-success">File Contract Revision #{{filecontract.newrevisionnumber}}</span></p>
+                                <p>Transaction ID:
+                                    <router-link :to="'/hash/'+filecontract.transaction">{{filecontract.transaction}}</router-link>
+                                </p>
+                                <p>Contract ID:
+                                    <router-link :to="'/hash/'+filecontract.id">{{filecontract.id}}</router-link>
+                                </p>
+                                <p>New Filesize: {{filecontract.newfilesize | filesize}}
+                                </p>
+
+                                <div class="row" v-if="filecontract.newmissedproofoutputs">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-warning btn-xs btn-collapse" type="button" data-toggle="collapse" :data-target="'#newmissed'+filecontract.id">
+                                                Missed Proofs
+                                        </button>
+                                        <div class="collapse" :id="'newmissed'+filecontract.id">
+                                            <div class="alert alert-warning" v-for="(missedproof, id) in filecontract.newmissedproofoutputs">
+                                                <p><span class="label label-warning">Missed Proof Output</span></p>
+                                                <p>Output ID:
+                                                    <router-link :to="'/hash/'+id">{{id}}</router-link>
+                                                </p>
+                                                <p>Amount: {{missedproof.value | currency}} SC</p>
+                                                <p>Receiver:
+                                                    <router-link :to="'/hash/'+missedproof.unlockhash">{{missedproof.unlockhash}}</router-link>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" v-if="filecontract.newvalidproofoutputs">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-success btn-xs btn-collapse" type="button" data-toggle="collapse" :data-target="'#newvalid'+filecontract.id">
+                                                Valid Proofs
+                                        </button>
+                                        <div class="collapse" :id="'newvalid'+filecontract.id">
+                                            <div class="alert alert-success" v-for="(validproof, id) in filecontract.newvalidproofoutputs">
+                                                <p><span class="label label-success">Valid Proof Output</span></p>
+                                                <p>Output ID:
+                                                    <router-link :to="'/hash/'+id">{{id}}</router-link>
+                                                </p>
+                                                <p>Amount: {{validproof.value | currency}} SC</p>
+                                                <p>Receiver:
+                                                    <router-link :to="'/hash/'+validproof.unlockhash">{{validproof.unlockhash}}</router-link>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -176,6 +272,7 @@
 import hashType from '../filters/hashType'
 import currency from '../filters/currency'
 import sfCurrency from '../filters/sfCurrency'
+import filesize from '../filters/filesize'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -221,6 +318,11 @@ export default {
                 _.each(b.transactions, (t) => {
                     _.each(t.siacoinoutputs, (o) => {
                         amount += parseInt(o.value);
+                    });
+                    _.each(t.filecontracts, (fc) => {
+                        _.each(fc.validproofoutputs, (vp) => {
+                            amount += parseInt(vp.value);
+                        });
                     });
                 });
             });
@@ -324,7 +426,8 @@ export default {
     filters: {
         hashType,
         currency,
-        sfCurrency
+        sfCurrency,
+        filesize
     },
     data() {
         return {
