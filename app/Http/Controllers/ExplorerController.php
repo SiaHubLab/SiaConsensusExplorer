@@ -30,7 +30,7 @@ class ExplorerController extends BaseController
                 $client = new \GuzzleHttp\Client();
                 $res = $client->request('GET', env('SIA_ADDRESS').'/consensus/blocks/'.$height);
                 $block = json_decode($res->getBody(), true);
-                Cache::put($cache_key, $block, 60);
+                Cache::put($cache_key, $block, 60*24);
             } catch (\Exception $e) {
                 return response()->json(['error' => 'Ooops, our wallet unavailable. Please try later.'], 503);
             }
@@ -63,7 +63,7 @@ class ExplorerController extends BaseController
                     $client = new \GuzzleHttp\Client();
                     $res = $client->request('GET', env('SIA_ADDRESS').'/consensus/blocks/'.$height);
                     $block = json_decode($res->getBody(), true);
-                    Cache::put($cache_key, $block, 60);
+                    Cache::put($cache_key, $block, 60*24);
                 } catch (\Exception $e) {
                     //return response()->json(['error' => 'Ooops, our wallet unavailable. Please try later.'], 503);
                     continue;
@@ -238,7 +238,7 @@ class ExplorerController extends BaseController
                              ->where('hash', $hash)
                              ->first();
 
-            Cache::put($cache_key, $hash, 60);
+            Cache::put($cache_key, $hash, 10);
         }
 
         return response()->json(Cache::get($cache_key));
