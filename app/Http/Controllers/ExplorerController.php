@@ -95,7 +95,7 @@ class ExplorerController extends BaseController
 
                 foreach ($block['transactions'] as $trid => $tr) {
                     foreach ($tr['filecontracts'] as $scoid => $sco) {
-                        $hash_check = $scoid;
+                        $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
                         $sco['id'] = $scoid;
                         $sco['transaction'] = $trid;
                         if ($hash_check == $request->input('hash')) {
