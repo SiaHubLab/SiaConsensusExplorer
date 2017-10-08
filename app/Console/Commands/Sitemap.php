@@ -66,7 +66,7 @@ class Sitemap extends Command
         		}
 
         		// add product to items array
-        		$sitemap->add('/hash/'.$hash->hash);
+        		$sitemap->add(secure_url('/hash/'.$hash->hash));
         		// count number of elements
         		$counter++;
         	}
