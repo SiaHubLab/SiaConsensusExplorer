@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,5 +11,5 @@
 */
 
 Route::get('/', 'MainController@index');
-Route::get('/hash/{hash}', 'MainController@index');
-Route::get('/block/{height}', 'MainController@index');
+Route::get('/hash/{hash_id}', 'MainController@index');
+Route::get('/block/{hash_id}', 'MainController@index');

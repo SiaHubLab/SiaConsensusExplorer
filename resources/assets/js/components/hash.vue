@@ -269,10 +269,10 @@
 </template>
 
 <script>
-import hashType from '../filters/hashType'
-import currency from '../filters/currency'
-import sfCurrency from '../filters/sfCurrency'
-import filesize from '../filters/filesize'
+import hashType from '../filters/hashType.js'
+import currency from '../filters/currency.js'
+import sfCurrency from '../filters/sfCurrency.js'
+import filesize from '../filters/filesize.js'
 import _ from 'lodash'
 import moment from 'moment'
 
