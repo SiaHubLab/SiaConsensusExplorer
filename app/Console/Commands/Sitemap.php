@@ -48,7 +48,7 @@ class Sitemap extends Command
         $sitemapCounter = 0;
 
     	// get all products from db (or wherever you store them)
-    	$hashes = Hash::chunk(50000, function($hashes) use (&$counter, &$sitemapCounter, &$sitemap) {
+    	$hashes = Hash::chunk(500000, function($hashes) use (&$counter, &$sitemapCounter, &$sitemap) {
 
         	// add every product to multiple sitemaps with one sitemap index
         	foreach ($hashes as $hash) {
