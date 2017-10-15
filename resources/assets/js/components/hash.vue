@@ -27,7 +27,7 @@
     </div>
     <div class="flying alert alert-success">
         <h5>Hash type: {{hash.type | hashType}}</h5>
-        <h5 v-if="hash.type == 'siacoinoutputid' || hash.type == 'siafundoutputid'">Spent: {{hash.spent ? "Yes":"No"}}</h5>
+        <h5 v-if="spendable">Spent: {{hash.spent ? "Yes":"No"}}</h5>
         <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
         <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
         <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
@@ -354,6 +354,9 @@ export default {
             axios.get('/api/hash/' + this.$route.params.hash)
                 .then((response) => {
                     this.hash = response.data;
+                    if(this.hash == 'siacoinoutputid' || this.hash == 'siafundoutputid') {
+                        this.spendable = true;
+                    }
                     this.loading = false;
                 })
                 .catch((error) => {
@@ -439,6 +442,7 @@ export default {
             loading: false,
             chunkLoad: false,
             error: false,
+            spendable: false,
             moment: moment,
         }
     }
