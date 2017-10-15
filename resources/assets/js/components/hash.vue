@@ -27,7 +27,7 @@
     </div>
     <div class="flying alert alert-success">
         <h5>Hash type: {{hash.type | hashType}}</h5>
-        <h5 v-if="spendable">Spent: {{hash.spent ? "Yes":"No"}}</h5>
+        <h5 v-show="spendable">Spent: {{hash.spent ? "Yes":"No"}}</h5>
         <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
         <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
         <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
