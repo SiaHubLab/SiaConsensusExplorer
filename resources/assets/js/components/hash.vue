@@ -354,9 +354,7 @@ export default {
             axios.get('/api/hash/' + this.$route.params.hash)
                 .then((response) => {
                     this.hash = response.data;
-                    console.log(this.hash);
-                    if(this.hash == 'siacoinoutputid' || this.hash == 'siafundoutputid') {
-                        console.log('spendable');
+                    if(this.hash.type == 'siacoinoutputid' || this.hash.type == 'siafundoutputid') {
                         this.spendable = true;
                     }
                     this.loading = false;
