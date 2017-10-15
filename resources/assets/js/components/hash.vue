@@ -20,6 +20,7 @@
         <div class="col-md-8 col-md-offset-2">
             <h3>Hash: <router-link :to="'/hash/'+hash.hash">{{hash.hash}}</router-link></h3>
             <h5>Hash type: {{hash.type | hashType}}</h5>
+            <h5 v-show="spendable">Spent: {{(hash.spent == 1) ? "Yes":"No"}}</h5>
             <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
             <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
             <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
@@ -27,7 +28,7 @@
     </div>
     <div class="flying alert alert-success">
         <h5>Hash type: {{hash.type | hashType}}</h5>
-        <h5 v-show="spendable">Spent: {{hash.spent ? "Yes":"No"}}</h5>
+        <h5 v-show="spendable">Spent: {{(hash.spent == 1) ? "Yes":"No"}}</h5>
         <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
         <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
         <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
