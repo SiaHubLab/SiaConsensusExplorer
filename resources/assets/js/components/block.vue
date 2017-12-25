@@ -29,7 +29,8 @@
     <div class="row blocksList" v-if="block.blockheight >= 0">
         <div class="col-md-8 col-md-offset-2">
             <h1>Block height #{{block.blockheight}}</h1>
-            <h3>Maturity Timestamp: {{moment.unix(block.blockheader.timestamp).fromNow()}} | {{moment.unix(block.blockheader.timestamp).format('MMMM DD YYYY, HH:mm:ss')}}</h3>
+            <h4>Block hash: {{block.id}}</h4>
+            <h4>Maturity Timestamp: {{moment.unix(block.blockheader.timestamp).fromNow()}} | {{moment.unix(block.blockheader.timestamp).format('MMMM DD YYYY, HH:mm:ss')}}</h4>
 
             <div class="row" v-if="block.minerpayouts">
                 <div class="col-md-12" v-for="scoutput in block.minerpayouts">
@@ -42,25 +43,32 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <h4>
                         <span class="label label-info">Transactions: {{length(block.transactions)}}</span>
                     </h4>
-                </div>
-                <div class="col-md-3">
                     <h4>
                         <span class="label label-info">SC Outputs: {{scoutputs.amount | currency}} SC ({{scoutputs.counter}})</span>
                     </h4>
                     <h4>
                         <span class="label label-info">SF Outputs: {{sfoutputs.amount | sfCurrency}} SF ({{sfoutputs.counter}})</span>
                     </h4>
-                </div>
-                <div class="col-md-3">
                     <h4>
                         <span class="label label-info">New file contracts: {{filecontracts.counter}}</span>
                     </h4>
                     <h4>
                         <span class="label label-info">File contract revisions: {{filecontractsrevisions.counter}}</span>
+                    </h4>
+                </div>
+                <div class="col-md-6">
+                    <h4>
+                        <span class="label label-info">Difficulty: {{block.difficulty | difficulty}} TH</span>
+                    </h4>
+                    <h4>
+                        <span class="label label-info">Estimated hashrate: {{block.estimatedhashrate | hashrate}} GH/s</span>
+                    </h4>
+                    <h4>
+                        <span class="label label-info">Total Coins: {{block.totalcoins | currency}} SC</span>
                     </h4>
                 </div>
             </div>
@@ -95,6 +103,8 @@ import hashType from '../filters/hashType.js'
 import currency from '../filters/currency.js'
 import sfCurrency from '../filters/sfCurrency.js'
 import filesize from '../filters/filesize.js'
+import difficulty from '../filters/difficulty.js'
+import hashrate from '../filters/hashrate.js'
 import _ from 'lodash'
 import moment from 'moment'
 
@@ -207,7 +217,9 @@ export default {
         hashType,
         currency,
         sfCurrency,
-        filesize
+        filesize,
+        difficulty,
+        hashrate,
     },
     data() {
         return {
