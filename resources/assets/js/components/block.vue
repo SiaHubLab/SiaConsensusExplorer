@@ -160,7 +160,7 @@ export default {
         filecontractsrevisions: function(){
             var counter = 0;
             _.each(this.block.transactions, (t) => {
-                _.each(t.filecontractsrevisions, (o) => {
+                _.each(t.filecontractrevisions, (o) => {
                     counter++;
                 });
             });
