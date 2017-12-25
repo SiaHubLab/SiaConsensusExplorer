@@ -83,6 +83,7 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="alert alert-danger">
                 <p v-for="err in error">{{err}}</p>
+                <p>Maybe this block doesn't exists yet? Go back to <router-link :to="'/block/'+($route.params.height-1)">#{{$route.params.height-1}}</router-link></p>
             </div>
         </div>
     </div>
