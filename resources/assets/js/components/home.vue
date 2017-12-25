@@ -1,11 +1,4 @@
 <style scoped>
-.hashCut {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 100px;
-    display: list-item;
-}
-
 .table
 {
     background-color: #fff;

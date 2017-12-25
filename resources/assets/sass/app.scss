@@ -7,3 +7,21 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+.hashCut {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100px;
+    display: list-item;
+}
+
+.label-link-white {
+    color: white;
+}
+
+.label-link-white:hover,
+.label-link-white:focus,
+.label-link-white:active {
+    color: #000;
+    text-decoration: none;
+}
