@@ -26,7 +26,20 @@
         </div>
     </div>
 
-    <div class="row blocksList" v-if="block.blockheight >= 0">
+    <div class="row" v-if="block.blockheight >= 0">
+        <nav aria-label="...">
+          <ul class="pager">
+            <li>
+                <router-link :to="'/block/'+(block.blockheight-1)">Previous block #{{block.blockheight-1}}</router-link>
+            </li>
+
+            <li><router-link :to="'/block/'+(block.blockheight+1)">Next block #{{block.blockheight+1}}</router-link></li>
+          </ul>
+        </nav>
+    </div>
+
+    <div class="row" v-if="block.blockheight >= 0">
+
         <div class="col-md-8 col-md-offset-2">
             <h1>Block height #{{block.blockheight}}</h1>
             <h4>Block hash: {{block.id}}</h4>
@@ -74,15 +87,13 @@
             </div>
 
             <div class="row">
-                <nav aria-label="...">
-                  <ul class="pager">
-                    <li>
-                        <router-link :to="'/block/'+(block.blockheight-1)">Previous block #{{block.blockheight-1}}</router-link>
-                    </li>
-
-                    <li><router-link :to="'/block/'+(block.blockheight+1)">Next block #{{block.blockheight+1}}</router-link></li>
-                  </ul>
-                </nav>
+                <div class="col-md-12"><h3>Siacoin outputs</h3></div>
+                <div class="col-md-2" v-for="output in scoutputs.data">
+                    <p class="alert alert-info">
+                        <router-link :to="'/hash/'+output.hash" class="hashCut">{{output.hash}}</router-link>
+                        {{output.value | currency}} SC
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -129,24 +140,28 @@ export default {
         scoutputs: function(){
             var amount = 0;
             var counter = 0;
+            var data = [];
             _.each(this.block.minerpayouts, (o) => {
                 amount += parseInt(o.value);
+                data.push({hash:o.unlockhash, value:parseInt(o.value)});
                 counter++;
             });
             _.each(this.block.transactions, (t) => {
                 _.each(t.siacoinoutputs, (o) => {
                     amount += parseInt(o.value);
+                    data.push({hash:o.unlockhash, value:parseInt(o.value)});
                     counter++;
                 });
                 _.each(t.filecontracts, (fc) => {
                     _.each(fc.validproofoutputs, (vp) => {
                         amount += parseInt(vp.value);
+                        data.push({hash:vp.unlockhash, value:parseInt(vp.value)});
                         counter++;
                     });
                 });
             });
-
-            return {amount, counter};
+            data = _.orderBy(data, 'value', 'desc');
+            return {amount, counter, data};
         },
         scinputs: function(){
             var counter = 0;
