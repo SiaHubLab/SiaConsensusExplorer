@@ -23,7 +23,7 @@
             <h5 v-show="spendable">Spent: {{(hash.spent == 1) ? "Yes":"No"}}</h5>
             <h5>Total SC Outputs: {{scoutputs | currency}} SC</h5>
             <h5>Total SF Outputs: {{sfoutputs | sfCurrency}} SF</h5>
-            <h5>Found in {{uniqueBlocks.length}} block(s)</h5>
+            <h5>Found in {{uniqueBlocks.length}} block(s) <span class="label label-danger" v-if="uniqueBlocks.length >= 10000">Reached 10000 blocks limit, older blocks will not be loaded.</span></h5>
         </div>
     </div>
     <div class="flying alert alert-success">

@@ -234,10 +234,15 @@ class ExplorerController extends BaseController
 
         $cache_key = "hash_".$hash;
         if (!Cache::has($cache_key)) {
-            $hash = Hash::with(['blocks', 'proofs', 'contracts'])
-                             ->where('hash', $hash)
-                             ->first();
-
+            $hash = Hash::with([
+                                'blocks' => function($q){
+                                    $q->limit(10000)->orderBy('height', 'desc');
+                                },
+                                'proofs',
+                                'contracts'
+                        ])
+                        ->where('hash', $hash)
+                        ->first();
             Cache::put($cache_key, $hash, 10);
         }
 
