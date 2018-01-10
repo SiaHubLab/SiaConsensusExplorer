@@ -18,3 +18,4 @@ Route::post('/blocks', 'ExplorerController@getBlocks');
 Route::get('/hash/{hash}', 'ExplorerController@getHash');
 Route::get('/latest', 'ExplorerController@getLatest');
 Route::get('/search/{search}', 'ExplorerController@getSearchResults');
+Route::get('/miner/{hash}/{block}', 'ExplorerController@miner');

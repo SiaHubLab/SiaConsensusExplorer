@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 window.Vue = require('vue');
 
 Vue.use(VueRouter);
+Vue.component('mined-by', require('./components/mined-by.vue'));
 
 const home = require('./components/home.vue');
 const hash = require('./components/hash.vue');

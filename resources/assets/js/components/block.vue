@@ -33,7 +33,9 @@
                 <router-link :to="'/block/'+(block.blockheight-1)">Previous block #{{block.blockheight-1}}</router-link>
             </li>
 
-            <li><router-link :to="'/block/'+(block.blockheight+1)">Next block #{{block.blockheight+1}}</router-link></li>
+            <li>
+                <router-link :to="'/block/'+(block.blockheight+1)">Next block #{{block.blockheight+1}}</router-link>
+            </li>
           </ul>
         </nav>
     </div>
@@ -50,9 +52,7 @@
                     <p>
                         <span class="label label-success">Block Reward {{scoutput.value | currency}} SC</span>
                     </p>
-                    <p>
-                        <span class="label label-primary">Mined by: <router-link :to="'/hash/'+scoutput.unlockhash" class="label-link-white">{{scoutput.unlockhash}}</router-link></span>
-                    </p>
+                    <mined-by :unlockhash="scoutput.unlockhash" :block="block.blockheight"></mined-by>
                 </div>
             </div>
             <div class="row">
