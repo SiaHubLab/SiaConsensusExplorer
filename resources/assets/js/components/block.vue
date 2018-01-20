@@ -52,7 +52,7 @@
                     <p>
                         <span class="label label-success">Block Reward {{scoutput.value | currency}} SC</span>
                     </p>
-                    <mined-by :unlockhash="scoutput.unlockhash" :block="block.blockheight"></mined-by>
+                    <mined-by :unlockhash="scoutput.unlockhash" :block="block"></mined-by>
                 </div>
             </div>
             <div class="row">

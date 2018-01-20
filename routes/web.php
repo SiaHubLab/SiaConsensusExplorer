@@ -11,5 +11,6 @@
 */
 
 Route::get('/', 'MainController@index');
+Route::get('/api-health', 'MainController@index');
 Route::get('/hash/{hash_id}', 'MainController@index');
 Route::get('/block/{hash_id}', 'MainController@index');

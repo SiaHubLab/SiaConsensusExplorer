@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
+use App\Miner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Hash;
@@ -30,6 +31,13 @@ class ExplorerController extends BaseController
                 $client = new \GuzzleHttp\Client();
                 $res = $client->request('GET', env('SIA_ADDRESS').'/consensus/blocks/'.$height);
                 $block = json_decode($res->getBody(), true);
+
+                $block_hash = Hash::with(['miner'])
+                                  ->join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
+                                  ->where('type', 'blockid')
+                                  ->where('block_hash_index.height', $height)
+                                  ->first();
+                $block = array_merge($block, ['hash_data' => $block_hash]);
                 Cache::put($cache_key, $block, 60*24);
             } catch (\Exception $e) {
                 return response()->json(['error'=> 'Ooops, our wallet unavailable. Please try later.'], 503);
@@ -455,6 +463,20 @@ class ExplorerController extends BaseController
                     $miner = $pool;
                     break;
                 }
+            }
+        }
+
+        if($miner) {
+            $block_hash = Hash::join('block_hash_index', 'block_hash_index.hash_id', '=', 'hashes.id')
+                              ->where('type', 'blockid')
+                              ->where('block_hash_index.height', $block)
+                              ->first();
+            if($block_hash && !$block_hash->miner_id) {
+                $block_hash->miner_id = Miner::firstOrCreate(['name' => $miner])->id;
+                $block_hash->save();
+
+                $cache_key = "block_" . $block;
+                Cache::delete($cache_key);
             }
         }
 

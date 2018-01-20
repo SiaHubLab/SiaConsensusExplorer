@@ -1,6 +1,9 @@
 <template>
     <div>
-        <p v-if="miner.miner">
+        <p v-if="block.hash_data && block.hash_data.miner_id">
+            <span class="label label-primary">Mined by: {{block.hash_data.miner.name}} (<router-link :to="'/hash/'+unlockhash" class="label-link-white">{{unlockhash}}</router-link>)</span>
+        </p>
+        <p v-else-if="miner.miner">
             <span class="label label-primary">Mined by: {{miner.miner}} (<router-link :to="'/hash/'+unlockhash" class="label-link-white">{{unlockhash}}</router-link>)</span>
         </p>
         <p v-else>
@@ -12,13 +15,15 @@
 <script>
     export default {
         mounted() {
-            axios.get('/api/miner/' + this.unlockhash + '/' + this.block)
-                .then((response) => {
-                    this.miner = response.data;
+            if(!this.block.hash_data || !this.block.hash_data.miner_id) {
+                axios.get('/api/miner/' + this.unlockhash + '/' + this.block.blockheight)
+                    .then((response) => {
+                        this.miner = response.data;
                 })
                 .catch((error) => {
-                   console.log(error);
+                        console.log(error);
                 });
+            }
         },
         props: ['unlockhash', 'block'],
         data: function() {

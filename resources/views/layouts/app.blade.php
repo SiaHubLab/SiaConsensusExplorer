@@ -41,7 +41,10 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                         <li><a href="/">Explorer</a></li>
-                        <li><a target="_blank" href="https://siahub.readme.io/v1.0/reference#block">API</a></li>
+                        <li><router-link to="/api-health">
+                                API Health
+                            </router-link></li>
+                        <li><a target="_blank" href="https://siahub.readme.io/v1.0/reference#block">API Docs</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a target="_blank" href="https://siahub.info/">Network Monitor</a></li>

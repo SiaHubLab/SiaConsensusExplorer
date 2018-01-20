@@ -19,7 +19,9 @@
     "vue": "^2.1.10"
   },
   "dependencies": {
+    "chart.js": "^2.7.1",
     "moment": "^2.18.1",
+    "vue-chartjs": "^3.1.0",
     "vue-router": "^2.7.0"
   }
 }
