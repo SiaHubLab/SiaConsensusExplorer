@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\Sitemap::class
+        Commands\Sitemap::class,
+        Commands\MinerPreload::class
     ];
 
     /**

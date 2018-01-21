@@ -486,22 +486,34 @@ class ExplorerController extends BaseController
     public function getBlocksDistribution($blocks)
     {
         $blocks = ($blocks > 1000) ? 1000:$blocks;
-        $distribution = Hash::with('miner')
-                      ->selectRaw('miner_id')
-                      ->where('type', 'blockid')
-                      ->orderBy('hashes.id', 'desc')
-                      ->take($blocks)
-                      ->get();
-        $data = [];
-        foreach($distribution as $miner) {
-            $miner_id = ($miner->miner_id) ? $miner->miner_id:'Unknown';
-            if(!isset($data[$miner_id])) {
-                $data[$miner_id] = ['miner' => $miner->miner, 'blocks' => 0];
+
+        $cache_key = "getBlocksDistribution".$blocks;
+        if (!Cache::has($cache_key)) {
+            $distribution = Hash::with('miner')
+                          ->selectRaw('miner_id')
+                          ->where('type', 'blockid')
+                          ->orderBy('hashes.id', 'desc')
+                          ->take($blocks)
+                          ->get();
+            $data = [];
+            foreach($distribution as $miner) {
+                $miner_id = ($miner->miner_id) ? $miner->miner_id:'Unknown';
+                if(!isset($data[$miner_id])) {
+                    $data[$miner_id] = ['miner' => $miner->miner, 'blocks' => 0];
+                }
+
+                $data[$miner_id]['blocks']++;
             }
 
-            $data[$miner_id]['blocks']++;
+
+
+            usort($data,function($a, $b) {
+                return $a['blocks'] - $b['blocks'];
+            });
+
+            Cache::put($cache_key, $data, 60);
         }
 
-        return response()->json($data);
+        return response()->json(Cache::get($cache_key));
     }
 }
