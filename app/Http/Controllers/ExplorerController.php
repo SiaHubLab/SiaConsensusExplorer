@@ -508,7 +508,7 @@ class ExplorerController extends BaseController
 
 
             usort($data,function($a, $b) {
-                return $a['blocks'] - $b['blocks'];
+                return $b['blocks'] <=> $a['blocks'];
             });
 
             Cache::put($cache_key, $data, 60);
