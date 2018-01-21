@@ -154,6 +154,17 @@
             </div>
         </div>
     </div>
+
+    <div class="row text-center">
+        <div class="col-md-4 col-md-offset-2">
+            <h3>Mining distribution last 100 blocks</h3>
+            <home-pools-pie blocks="100"></home-pools-pie>
+        </div>
+        <div class="col-md-4">
+            <h3>Mining distribution last 1000 blocks</h3>
+            <home-pools-pie blocks="1000"></home-pools-pie>
+        </div>
+    </div>
 </div>
 </template>
 

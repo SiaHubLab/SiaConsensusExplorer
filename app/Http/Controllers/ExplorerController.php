@@ -482,4 +482,26 @@ class ExplorerController extends BaseController
 
         return response()->json(['miner' => $miner]);
     }
+
+    public function getBlocksDistribution($blocks)
+    {
+        $blocks = ($blocks > 1000) ? 1000:$blocks;
+        $distribution = Hash::with('miner')
+                      ->selectRaw('miner_id')
+                      ->where('type', 'blockid')
+                      ->orderBy('hashes.id', 'desc')
+                      ->take($blocks)
+                      ->get();
+        $data = [];
+        foreach($distribution as $miner) {
+            $miner_id = ($miner->miner_id) ? $miner->miner_id:'Unknown';
+            if(!isset($data[$miner_id])) {
+                $data[$miner_id] = ['miner' => $miner->miner, 'blocks' => 0];
+            }
+
+            $data[$miner_id]['blocks']++;
+        }
+
+        return response()->json($data);
+    }
 }

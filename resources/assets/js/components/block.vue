@@ -44,8 +44,8 @@
 
         <div class="col-md-8 col-md-offset-2">
             <h1>Block height #{{block.blockheight}}</h1>
-            <h4>Block hash: {{block.id}}</h4>
-            <h4>Maturity Timestamp: {{moment.unix(block.blockheader.timestamp).fromNow()}} | {{moment.unix(block.blockheader.timestamp).format('MMMM DD YYYY, HH:mm:ss')}}</h4>
+            <p style="word-wrap: break-word;">Block hash: {{block.id}}</p>
+            <p>Maturity Timestamp: {{moment.unix(block.blockheader.timestamp).fromNow()}} | {{moment.unix(block.blockheader.timestamp).format('MMMM DD YYYY, HH:mm:ss')}}</p>
 
             <div class="row" v-if="block.minerpayouts">
                 <div class="col-md-12" v-for="scoutput in block.minerpayouts">

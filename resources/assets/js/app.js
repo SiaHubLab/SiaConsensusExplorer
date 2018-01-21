@@ -7,6 +7,7 @@ Vue.use(VueRouter);
 Vue.component('mined-by', require('./components/mined-by.vue'));
 Vue.component('api-health-main', require('./components/api-health-main.vue'));
 Vue.component('api-health-endpoints', require('./components/api-health-endpoints.vue'));
+Vue.component('home-pools-pie', require('./components/home-pools-pie.vue'));
 
 const home = require('./components/home.vue');
 const hash = require('./components/hash.vue');
