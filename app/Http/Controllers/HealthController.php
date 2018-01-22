@@ -14,7 +14,7 @@ class HealthController extends BaseController
     public function main()
     {
         $data = Stat::selectRaw('round(avg(execution_time), 5) as execution_time, count(*) as requests, UNIX_TIMESTAMP(created_at) as date')
-                    ->whereDate('created_at', '>=', Carbon::now()->subDay())
+                    ->where('created_at', '>=', Carbon::now()->subDay())
                     ->groupBy(DB::raw('UNIX_TIMESTAMP(created_at) div 600'))
                     ->orderBy('created_at', 'asc')
                     ->get();
@@ -24,7 +24,7 @@ class HealthController extends BaseController
     public function endpoints()
     {
         $data = Stat::selectRaw('count(*) as requests, routes.route')
-                    ->whereDate('stats.created_at', '>=', Carbon::now()->subDay())
+                    ->where('stats.created_at', '>=', Carbon::now()->subDay())
                     ->join('routes', 'routes.id', '=', 'stats.route_id')
                     ->groupBy('route_id')
                     ->get();
