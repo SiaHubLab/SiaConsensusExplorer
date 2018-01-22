@@ -15,7 +15,7 @@ class HealthController extends BaseController
     {
         $data = Stat::selectRaw('round(avg(execution_time), 5) as execution_time, count(*) as requests, UNIX_TIMESTAMP(created_at) as date')
                     ->where('created_at', '>=', Carbon::now()->subDay())
-                    ->groupBy(DB::raw('UNIX_TIMESTAMP(created_at) div 600'))
+                    ->groupBy(DB::raw('UNIX_TIMESTAMP(created_at) div 1800'))
                     ->orderBy('created_at', 'asc')
                     ->get();
         return response()->json($data);
