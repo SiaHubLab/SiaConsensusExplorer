@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('sitemap')
-                 ->hourly()->withoutOverlapping();
+//        $schedule->command('sitemap')
+//                 ->hourly()->withoutOverlapping();
 
         $schedule->command('blockmetrics')
                  ->everyTenMinutes()->withoutOverlapping();
