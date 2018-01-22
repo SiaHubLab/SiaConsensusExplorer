@@ -35,7 +35,7 @@ class MinerPreload extends Command
         ]);
 
         $requests = function () {
-            for($i=138000;$i<139000;$i++){
+            for($i=130000;$i<139100;$i++){
                 yield new Request('GET', 'https://explorer.siahub.info/api/block/'.$i);
             }
         };

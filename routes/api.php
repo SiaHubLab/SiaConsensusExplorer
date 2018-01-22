@@ -25,3 +25,7 @@ Route::get('/blocks/distribution/{blocks}', 'ExplorerController@getBlocksDistrib
 
 Route::get('/health/main', 'HealthController@main');
 Route::get('/health/endpoints', 'HealthController@endpoints');
+
+
+Route::get('/metrics/difficulty/{blocks}', 'BlockMetricsController@difficulty');
+Route::get('/metrics/hashrate/{blocks}', 'BlockMetricsController@hashrate');

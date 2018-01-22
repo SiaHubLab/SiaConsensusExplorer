@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\Sitemap::class,
-        Commands\MinerPreload::class
+        Commands\MinerPreload::class,
+        Commands\BlockMetrics::class,
     ];
 
     /**
@@ -27,6 +28,9 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('sitemap')
                  ->hourly()->withoutOverlapping();
+
+        $schedule->command('blockmetrics')
+                 ->everyTenMinutes()->withoutOverlapping();
     }
 
     /**
