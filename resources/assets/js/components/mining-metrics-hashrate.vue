@@ -1,5 +1,6 @@
 <script>
     import { Line, mixins } from 'vue-chartjs'
+    import _  from 'lodash'
 
     export default {
         extends: Line,
