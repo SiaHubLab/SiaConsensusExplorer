@@ -359,6 +359,10 @@ export default {
                         this.spendable = true;
                     }
                     this.loading = false;
+
+                    if(this.hash.type == 'blockid') {
+                        this.$router.push('/block/'+this.hash.blocks[0].height);
+                    }
                 })
                 .catch((error) => {
                     console.log(error);

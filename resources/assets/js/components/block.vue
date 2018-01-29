@@ -86,13 +86,66 @@
                 </div>
             </div>
 
+            <!--<div class="row">-->
+                <!--<div class="col-md-12"><h3>Siacoin outputs</h3></div>-->
+                <!--<div class="col-md-12">-->
+                    <!--<div class="table-responsive">-->
+                        <!--<table class="table table-hover">-->
+                            <!--<tbody>-->
+                                <!--<tr v-for="output in scoutputs.data">-->
+                                    <!--<td><router-link :to="'/hash/'+output.hash">{{output.hash}}</router-link></td>-->
+                                    <!--<td>{{output.value | currency}} SC</td>-->
+                                <!--</tr>-->
+                            <!--</tbody>-->
+                        <!--</table>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="row">
                 <div class="col-md-12"><h3>Siacoin outputs</h3></div>
-                <div class="col-md-2" v-for="output in scoutputs.data">
-                    <p class="alert alert-info">
-                        <router-link :to="'/hash/'+output.hash" class="hashCut">{{output.hash}}</router-link>
-                        {{output.value | currency}} SC
-                    </p>
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tx ID</th>
+                                    <th>Receiver</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="tx in this.block.transactions">
+                                    <td v-if="lodash.size(tx.siacoininputs) == 1 && lodash.size(tx.siacoinoutputs) == 2">
+                                        <router-link :to="'/hash/'+tx.siacoininputs[lodash.keys(tx.siacoininputs)[0]].parentid">
+                                            {{tx.siacoininputs[lodash.keys(tx.siacoininputs)[0]].parentid}}
+                                        </router-link>
+                                    </td>
+                                    <td v-if="lodash.size(tx.siacoininputs) == 1 && lodash.size(tx.siacoinoutputs) == 2">
+                                        <router-link class="hashCut" :to="'/hash/'+tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[0]].unlockhash">
+                                            {{tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[0]].unlockhash}}
+                                        </router-link>
+                                        <span title="Internal SC split transaction">{{tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[0]].value | currency}} SC</span>
+                                        <br />
+                                        <router-link class="hashCut" :to="'/hash/'+tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[1]].unlockhash">
+                                            {{tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[1]].unlockhash}}
+                                        </router-link>
+                                        <span class="label label-success">+{{tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[1]].value | currency}} SC</span>
+                                    </td>
+
+                                    <td v-if="lodash.size(tx.siacoininputs) == 1 && lodash.size(tx.siacoinoutputs) == 1">
+                                        <router-link :to="'/hash/'+tx.siacoininputs[lodash.keys(tx.siacoininputs)[0]].parentid">
+                                            {{tx.siacoininputs[lodash.keys(tx.siacoininputs)[0]].parentid}}
+                                        </router-link>
+                                    </td>
+                                    <td v-if="lodash.size(tx.siacoininputs) == 1 && lodash.size(tx.siacoinoutputs) == 1">
+                                        <router-link class="hashCut" :to="'/hash/'+tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[0]].unlockhash">
+                                            {{tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[0]].unlockhash}}
+                                        </router-link>
+                                        <span class="label label-success">+{{tx.siacoinoutputs[lodash.keys(tx.siacoinoutputs)[0]].value | currency}} SC</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -242,6 +295,7 @@ export default {
             loading: false,
             error: false,
             moment: moment,
+            lodash: _
         }
     }
 }
