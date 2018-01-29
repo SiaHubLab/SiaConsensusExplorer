@@ -55,18 +55,28 @@
             build() {
                 axios.get('/api/metrics/hashrate/'+this.blocks).then((response) => {
                     this.hashrate.data = [];
-                for(var i in response.data) {
-                    this.hashrate.data.push({
-                        t: new Date(response.data[i].timestamp * 1000),
-                        y: response.data[i].estimatedhashrate,
-                        height: response.data[i].height
-                    });
-                }
+                    var first = false;
+                    for(var i in response.data) {
+                        this.hashrate.data.push({
+                            t: new Date(response.data[i].timestamp * 1000),
+                            y: response.data[i].estimatedhashrate,
+                            height: response.data[i].height
+                        });
 
-                this.chartData = {
-                    datasets: [this.hashrate]
-                };
-            });
+                        if(!first) {
+                            first = response.data[i].estimatedhashrate;
+                        }
+                    }
+
+                    var lastKey = _.findLastKey(this.hashrate.data);
+                    var last = this.hashrate.data[lastKey].y;
+                    var diff = ((first-last)/last)*100;
+                    this.hashrate.label = "Estimated Hashrate:  "+((diff > 0) ? "+":"")+Math.round(diff)+"%";
+
+                    this.chartData = {
+                        datasets: [this.hashrate]
+                    };
+                });
             }
         }
     }

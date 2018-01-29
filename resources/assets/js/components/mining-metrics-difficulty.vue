@@ -1,5 +1,6 @@
 <script>
     import { Line, mixins } from 'vue-chartjs'
+    import _  from 'lodash'
 
     export default {
         extends: Line,
@@ -55,14 +56,23 @@
             build() {
                 axios.get('/api/metrics/difficulty/'+this.blocks).then((response) => {
                     this.difficulty.data = [];
+                    var first = false;
                     for(var i in response.data) {
                         this.difficulty.data.push({
                             t: new Date(response.data[i].timestamp * 1000),
                             y: response.data[i].difficulty,
                             height: response.data[i].height
                         });
+
+                        if(!first) {
+                            first = response.data[i].difficulty;
+                        }
                     }
 
+                    var lastKey = _.findLastKey(this.difficulty.data);
+                    var last = this.difficulty.data[lastKey].y;
+                    var diff = ((first-last)/last)*100;
+                    this.difficulty.label = "Difficulty:  "+((diff > 0) ? "+":"")+Math.round(diff)+"%";
                     this.chartData = {
                         datasets: [this.difficulty]
                     };
