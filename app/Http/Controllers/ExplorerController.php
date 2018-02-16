@@ -457,6 +457,24 @@ class ExplorerController extends BaseController
             }
         }
 
+        $cache_key = "antblocks";
+        if (!Cache::has($cache_key)) {
+            try {
+                $client = new \GuzzleHttp\Client();
+                $res = $client->request('GET', 'https://siastats.info/dbs/antpoolblocks.json'); // Hello SiaStats
+                $block = json_decode($res->getBody(), true);
+                Cache::put($cache_key, $block, 10);
+            } catch (\Exception $e) {
+                //return response()->json(['error'=> 'Ooops, mphblocks unavailable. Please try later.'], 503);
+            }
+        }
+
+        if($nano = Cache::get($cache_key)) {
+            if(in_array($block, $nano)) {
+                $miner = "AntPool.com";
+            }
+        }
+
         if(!$miner) {
             foreach($miners as $pool => $addresses) {
                 if(in_array($hash, $addresses)) {
