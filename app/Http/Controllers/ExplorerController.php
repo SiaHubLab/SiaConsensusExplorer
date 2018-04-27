@@ -40,11 +40,18 @@ class ExplorerController extends BaseController
                 $block = array_merge($block, ['hash_data' => $block_hash]);
                 Cache::put($cache_key, $block, 60*24);
             } catch (\Exception $e) {
+                Cache::put($cache_key, ['error' => 'Block is not ready yet.'], 5);
                 return response()->json(['error'=> 'Ooops, our wallet unavailable. Please try later.'], 503);
             }
         }
 
-        return response()->json(Cache::get($cache_key));
+        $block = Cache::get($cache_key);
+
+        if(!empty($block['error'])) {
+              return response()->json($block, 503);
+        }
+
+        return response()->json($block);
     }
 
     /**
@@ -63,7 +70,6 @@ class ExplorerController extends BaseController
         $blocks = [];
         $response = [];
 
-
         foreach (array_unique($request->input('blocks')) as $height) {
             $cache_key = "block_".$height;
             if (!Cache::has($cache_key)) {
@@ -78,147 +84,157 @@ class ExplorerController extends BaseController
                 }
             } else {
                 $block = Cache::get($cache_key);
+                if(!empty($block['error'])) { continue; }
             }
 
-            $response[$height]['height'] = $height;
-            $response[$height]['headers'] = $block['blockheader'];
 
-            if (env('APP_ENV') == "local") {
-                $response[$height]['raw'] = $block;
-            }
+            $response_cache_key = "resp_block_".$height;
+            if (Cache::has($response_cache_key)) {
+                $response[$height] = Cache::get($response_cache_key);
+                $response[$height]['cached'] = true;
+            } else {
+                $response[$height]['height'] = $height;
+                $response[$height]['headers'] = $block['blockheader'];
 
-            switch ($request->input('type')) {
-                case 'unlockhash':
-                case 'siacoinoutputid':
-                case 'siafundoutputid':
-                case 'filecontractid':
-                case 'filecontractrevisions':
-                foreach ($block['minerpayouts'] as $scoid => $sco) {
-                    $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
-                    if ($hash_check == $request->input('hash')) {
-                        $sco['id'] = $scoid;
-                        $response[$height]['minerpayouts'][] = $sco;
-                    }
+                if (env('APP_ENV') == "local") {
+                    $response[$height]['raw'] = $block;
                 }
 
-                foreach ($block['transactions'] as $trid => $tr) {
-                    foreach ($tr['filecontracts'] as $scoid => $sco) {
+                switch ($request->input('type')) {
+                    case 'unlockhash':
+                    case 'siacoinoutputid':
+                    case 'siafundoutputid':
+                    case 'filecontractid':
+                    case 'filecontractrevisions':
+                    foreach ($block['minerpayouts'] as $scoid => $sco) {
                         $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
-                        $sco['id'] = $scoid;
-                        $sco['transaction'] = $trid;
                         if ($hash_check == $request->input('hash')) {
-                            $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                            $sco['id'] = $scoid;
+                            $response[$height]['minerpayouts'][] = $sco;
                         }
+                    }
 
-                        foreach ($sco['validproofoutputs'] as $hash => $proof) {
-                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                    foreach ($block['transactions'] as $trid => $tr) {
+                        foreach ($tr['filecontracts'] as $scoid => $sco) {
+                            $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
                             if ($hash_check == $request->input('hash')) {
                                 $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
                             }
-                        }
 
-                        foreach ($sco['missedproofoutputs'] as $hash => $proof) {
-                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
-                            if ($hash_check == $request->input('hash')) {
-                                $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                            foreach ($sco['validproofoutputs'] as $hash => $proof) {
+                                $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                                if ($hash_check == $request->input('hash')) {
+                                    $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                                }
                             }
-                        }
-                    }
 
-                    foreach ($tr['filecontractrevisions'] as $scoid => $sco) {
-                        $hash_check = $scoid;
-                        $sco['id'] = $scoid;
-                        $sco['transaction'] = $trid;
-                        if ($hash_check == $request->input('hash')) {
-                            $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
-                        }
-
-                        foreach ($sco['newvalidproofoutputs'] as $hash => $proof) {
-                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
-                            if ($hash_check == $request->input('hash')) {
-                                $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                            foreach ($sco['missedproofoutputs'] as $hash => $proof) {
+                                $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                                if ($hash_check == $request->input('hash')) {
+                                    $response[$height]['transactions'][$trid]['filecontracts'][$scoid] = $sco;
+                                }
                             }
                         }
 
-                        foreach ($sco['newmissedproofoutputs'] as $hash => $proof) {
-                            $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                        foreach ($tr['filecontractrevisions'] as $scoid => $sco) {
+                            $hash_check = $scoid;
+                            $sco['id'] = $scoid;
+                            $sco['transaction'] = $trid;
                             if ($hash_check == $request->input('hash')) {
                                 $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
                             }
-                        }
-                    }
 
-                    foreach ($tr['siacoininputs'] as $scoid => $sco) {
-                        $hash_check = $scoid;
-                        if ($hash_check == $request->input('hash')) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siacoininputs'][$scoid] = $sco;
-                        }
-                    }
+                            foreach ($sco['newvalidproofoutputs'] as $hash => $proof) {
+                                $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                                if ($hash_check == $request->input('hash')) {
+                                    $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                                }
+                            }
 
-                    foreach ($tr['siacoinoutputs'] as $scoid => $sco) {
-                        $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
-                        if ($hash_check == $request->input('hash')) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                            foreach ($sco['newmissedproofoutputs'] as $hash => $proof) {
+                                $hash_check = ($request->input('type') == "unlockhash") ? $proof['unlockhash']:$hash;
+                                if ($hash_check == $request->input('hash')) {
+                                    $response[$height]['transactions'][$trid]['filecontractrevisions'][$scoid] = $sco;
+                                }
+                            }
                         }
-                    }
 
-                    foreach ($tr['siafundinputs'] as $scoid => $sco) {
-                        $hash_check = $scoid;
-                        if ($hash_check == $request->input('hash')) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siafundinputs'][$scoid] = $sco;
-                        }
-                    }
-
-                    foreach ($tr['siafundoutputs'] as $scoid => $sco) {
-                        $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
-                        if ($hash_check == $request->input('hash')) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;
-                        }
-                    }
-                }
-                break;
-
-                case 'transactionid':
-                foreach ($block['transactions'] as $trid => $tr) {
-                    if ($trid == $request->input('hash')) {
                         foreach ($tr['siacoininputs'] as $scoid => $sco) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siacoininputs'][$scoid] = $sco;
+                            $hash_check = $scoid;
+                            if ($hash_check == $request->input('hash')) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siacoininputs'][$scoid] = $sco;
+                            }
                         }
 
                         foreach ($tr['siacoinoutputs'] as $scoid => $sco) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                            $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
+                            if ($hash_check == $request->input('hash')) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                            }
                         }
 
                         foreach ($tr['siafundinputs'] as $scoid => $sco) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siafundinputs'][$scoid] = $sco;
+                            $hash_check = $scoid;
+                            if ($hash_check == $request->input('hash')) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siafundinputs'][$scoid] = $sco;
+                            }
                         }
 
                         foreach ($tr['siafundoutputs'] as $scoid => $sco) {
-                            $sco['id'] = $scoid;
-                            $sco['transaction'] = $trid;
-                            $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;
+                            $hash_check = ($request->input('type') == "unlockhash") ? $sco['unlockhash']:$scoid;
+                            if ($hash_check == $request->input('hash')) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;
+                            }
                         }
                     }
-                }
-                break;
+                    break;
 
-                default:
-                    $response[] = $block;
-                break;
+                    case 'transactionid':
+                    foreach ($block['transactions'] as $trid => $tr) {
+                        if ($trid == $request->input('hash')) {
+                            foreach ($tr['siacoininputs'] as $scoid => $sco) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siacoininputs'][$scoid] = $sco;
+                            }
+
+                            foreach ($tr['siacoinoutputs'] as $scoid => $sco) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siacoinoutputs'][$scoid] = $sco;
+                            }
+
+                            foreach ($tr['siafundinputs'] as $scoid => $sco) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siafundinputs'][$scoid] = $sco;
+                            }
+
+                            foreach ($tr['siafundoutputs'] as $scoid => $sco) {
+                                $sco['id'] = $scoid;
+                                $sco['transaction'] = $trid;
+                                $response[$height]['transactions'][$trid]['siafundoutputs'][$scoid] = $sco;
+                            }
+                        }
+                    }
+                    break;
+
+                    default:
+                        $response[] = $block;
+                    break;
+                }
+
+                Cache::put($response_cache_key, $response[$height], 60*24);
             }
         }
 
