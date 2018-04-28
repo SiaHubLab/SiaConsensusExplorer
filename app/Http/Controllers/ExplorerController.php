@@ -575,7 +575,7 @@ class ExplorerController extends BaseController
                     'explorer_synced' => $block_index->height >= $consensus['height'],
                     'last_indexed_height' => $block_index->height
                 ]);
-                Cache::put($cache_key, $consensus, 60*24);
+                Cache::put($cache_key, $consensus, 1);
             } catch (\Exception $e) {
                 Cache::put($cache_key, ['error' => 'Can\'t get consensus now, try in 5 minutes.'], 5);
                 return response()->json(['error'=> 'Can\'t get consensus now, try in 5 minutes.'], 503);
