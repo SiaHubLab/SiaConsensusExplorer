@@ -88,7 +88,7 @@ class ExplorerController extends BaseController
             }
 
 
-            $response_cache_key = "resp_block_".$height;
+            $response_cache_key = "resp_block_".$height.$request->input('type').$request->input('hash');
             if (Cache::has($response_cache_key)) {
                 $response[$height] = Cache::get($response_cache_key);
                 $response[$height]['cached'] = true;
