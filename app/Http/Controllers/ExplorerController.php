@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
 use App\Miner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Hash;
@@ -573,7 +574,8 @@ class ExplorerController extends BaseController
 
                 $consensus = array_merge($consensus, [
                     'explorer_synced' => $block_index->height >= $consensus['height'],
-                    'last_indexed_height' => $block_index->height
+                    'last_indexed_height' => $block_index->height,
+                    'cached_at' => Carbon::now()->format('Y-m-d H:i:s')
                 ]);
                 Cache::put($cache_key, $consensus, 1);
             } catch (\Exception $e) {
