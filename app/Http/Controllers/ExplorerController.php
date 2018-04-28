@@ -7,6 +7,7 @@ use App\Miner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Hash;
+use App\BlockIndex;
 
 class ExplorerController extends BaseController
 {
@@ -549,5 +550,44 @@ class ExplorerController extends BaseController
         }
 
         return response()->json(Cache::get($cache_key));
+    }
+
+
+    /**
+     * Get consensus state
+     *
+     * Load consensus state from siad and current explorer last known block
+     *
+     * @return return json
+     */
+    public function getConsensus()
+    {
+        $cache_key = "consensus";
+        if (!Cache::has($cache_key)) {
+            try {
+                $client = new \GuzzleHttp\Client();
+                $res = $client->request('GET', env('SIA_ADDRESS').'/consensus');
+                $consensus = json_decode($res->getBody(), true);
+
+                $block_index = BlockIndex::orderBy('height', 'desc')->first();
+
+                $consensus = array_merge($consensus, [
+                    'explorer_synced' => $block_index->height >= $consensus['height'],
+                    'last_indexed_height' => $block_index->height
+                ]);
+                Cache::put($cache_key, $consensus, 60*24);
+            } catch (\Exception $e) {
+                Cache::put($cache_key, ['error' => 'Can\'t get consensus now, try in 5 minutes.'], 5);
+                return response()->json(['error'=> 'Can\'t get consensus now, try in 5 minutes.'], 503);
+            }
+        }
+
+        $consensus = Cache::get($cache_key);
+
+        if(!empty($block['error'])) {
+            return response()->json($consensus, 503);
+        }
+
+        return response()->json($consensus);
     }
 }

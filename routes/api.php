@@ -21,7 +21,7 @@ Route::get('/search/{search}', 'ExplorerController@getSearchResults');
 Route::get('/miner/{hash}/{block}', 'ExplorerController@miner');
 
 Route::get('/blocks/distribution/{blocks}', 'ExplorerController@getBlocksDistribution');
-
+Route::get('/consensus', 'ExplorerController@getConsensus');
 
 Route::get('/health/main', 'HealthController@main');
 Route::get('/health/endpoints', 'HealthController@endpoints');
