@@ -33,6 +33,8 @@ class BlockMetrics extends Command
      */
     public function handle()
     {
+        DB::table('stats')->whereRaw('created_at <= date_sub(now(), interval 2 day)')->delete();
+
         $client = new Client();
 
         $last_height = DB::table('block_hash_index')->select('height')->orderBy('height', 'desc')->first();
