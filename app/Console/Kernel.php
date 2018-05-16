@@ -31,6 +31,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('blockmetrics')
                  ->everyTenMinutes()->withoutOverlapping();
+
+	$schedule->command('miner:preload')
+                 ->everyTenMinutes()->withoutOverlapping();
     }
 
     /**

@@ -435,6 +435,7 @@ class ExplorerController extends BaseController
                 'd1c5b364f5f5dab1005aa14b44ef1bf743683ea85221ca6e1a1b0c7a8c64ffe95cc253297d8a',
                 'd7775e8d120843a6cd64d3b50784962912bea16d260b7fc9e4861cbc3f8ffca3704cc357b49b',
                 '8374a8051c523e8563332cd6d44e1151a689f0613aaa9ed3b561db4bf6fb09f1a62531a457ce',
+		'2b37c0605d83cb4ba38d32b12d6c7b705ac06f9a7e78e3ec8bed4c119a866824cc03f1746378'
             ],
         ];
 

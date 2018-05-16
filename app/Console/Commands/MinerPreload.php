@@ -30,12 +30,15 @@ class MinerPreload extends Command
      */
     public function handle()
     {
+        $client = new Client([]);
 
-        $client = new Client([
-        ]);
+        $res = $client->request('GET', 'https://explorer.siahub.info/api/consensus/');
+        $consensus = json_decode($res->getBody(), true);
 
-        $requests = function () {
-            for($i=130000;$i<139100;$i++){
+        $last_block = $consensus['last_indexed_height'];
+
+        $requests = function () use ($last_block) {
+            for($i=$last_block-10;$i<$last_block;$i++){
                 yield new Request('GET', 'https://explorer.siahub.info/api/block/'.$i);
             }
         };
